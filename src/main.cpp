@@ -7,6 +7,8 @@
 
 #define NUMPIXELS 14 // Popular NeoPixel ring size
 
+uint32_t last_input = 0;
+bool is_on = false;
 // When setting up the NeoPixel library, we tell it how many pixels,
 // and which pin to use to send signals. Note that for older NeoPixel
 // strips you might need to change the third parameter -- see the
@@ -33,31 +35,42 @@ void loop() {
     Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
 
     uint32_t received_signal = IrReceiver.decodedIRData.decodedRawData;
+    if (is_on) {
+      switch(received_signal) {
 
-    switch(received_signal) {
+        case 0xE619FF00:
+          last_input = red;
+          pixels.fill(red, 0, NUMPIXELS);
+          pixels.show();
+          break;
 
-      case 0xE619FF00:
-        pixels.fill(red, 0, NUMPIXELS);
-        pixels.show();
-        break;
+        case 0xE41BFF00:
+          last_input = green;
+          pixels.fill(green, 0, NUMPIXELS);
+          pixels.show();
+          break;
 
-      case 0xE41BFF00:
-        pixels.fill(green, 0, NUMPIXELS);
-        pixels.show();
-        break;
+        case 0xEE11FF00:
+          last_input = blue;
+          pixels.fill(blue, 0, NUMPIXELS);
+          pixels.show();
+          break;
 
-      case 0xEE11FF00:
-        pixels.fill(blue, 0, NUMPIXELS);
-        pixels.show();
-        break;
-      
-      case 0xE01FFF00: // off button
-        pixels.clear();
-        pixels.show();
-        break;
-
-      case 0xF20DFF00: // on button
-        break;
+        case 0xE01FFF00: // off button
+            is_on = false;
+            pixels.clear();
+            pixels.show();
+            break;
+      }
+    } else {
+        switch(received_signal) {
+          case 0xF20DFF00: // on button
+            is_on = true;
+            Serial.println(last_input);
+            pixels.fill(last_input, 0, NUMPIXELS);
+            pixels.show();
+            break;
+        }
     }
     IrReceiver.resume();
     }
