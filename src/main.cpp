@@ -18,9 +18,9 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
 
-  uint32_t red = pixels.Color(255,0,0); // E619FF00 red
-  uint32_t green = pixels.Color(0,255,0); // E41BFF00, green
-  uint32_t blue = pixels.Color(0,0,255); // EE11FF00, blue
+  uint32_t red = pixels.gamma32(pixels.ColorHSV(0)); // E619FF00 red
+  uint32_t green = pixels.gamma32(pixels.ColorHSV(65536/3)); // E41BFF00, green
+  uint32_t blue = pixels.gamma32(pixels.ColorHSV(2*65536/3)); // EE11FF00, blue
   // E01FFF00, off
   // F20DFF00, on
 
