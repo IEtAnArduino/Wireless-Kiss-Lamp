@@ -3,7 +3,7 @@
 #include <ElegantOTA.h>
 #include <WiFi.h>
 
-#define PIN 0
+#define NEO_PIN 16
 
 #define NUMPIXELS 14 // Popular NeoPixel ring size
 
@@ -13,7 +13,7 @@ bool is_on = false;
 // and which pin to use to send signals. Note that for older NeoPixel
 // strips you might need to change the third parameter -- see the
 // strandtest example for more information on possible values.
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels(NUMPIXELS, NEO_PIN, NEO_GRB + NEO_KHZ800);
 
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
@@ -27,6 +27,13 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 void setup() {
   Serial.begin(115200);
   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+  pixels.clear(); // Set all pixel colors to 'off'
+  pixels.show();  // Update strip to match
+
+  pinMode(21, OUTPUT);
+  pinMode(22, OUTPUT);
+  digitalWrite(21, LOW); // acting as ground for the KY-022 IR receiver module
+  digitalWrite(22, HIGH); // acting as VCC for the KY-022 IR receiver module
   IrReceiver.begin(2);
 }
 
