@@ -16,6 +16,10 @@ int brightness = 255; // aka value for adjustValue function, 0-255
 
 bool dimming = true; // for fade function
 
+int gradations = 1000; // for rainbow function, number of gradations in the rainbow effect
+int angle = 0; // for rainbow function, can be from 0 to gradations, multiplied by 65536/gradations to get the hue value for ColorHSV
+int rainbowSpeed = 1; // speed of the rainbow effect, can be adjusted to make it faster or slower
+
 Adafruit_NeoPixel pixels(NUMPIXELS, NEO_PIN, NEO_GRB + NEO_KHZ800);
 
 uint32_t red = pixels.gamma32(pixels.ColorHSV(0));              // 0xFB04EF00 red
@@ -75,6 +79,35 @@ void updateColors()
         dimming = !dimming;
       }
     }
+    // else if (state == 2)
+    // {
+    //   // cycle
+    //   pixels.fill(currentColor, 0, NUMPIXELS);
+    //   pixels.show();
+    //   if (currentColor == red)
+    //   {
+    //     currentColor = green;
+    //   }
+    //   else if (currentColor == green)
+    //   {
+    //     currentColor = blue;
+    //   }
+    //   else if (currentColor == blue)
+    //   {
+    //     currentColor = white;
+    //   }
+    //   else if (currentColor == white)
+    //   {
+    //     currentColor = red;
+    //   }
+    // }
+    else if (state == 3)
+    {
+      // rainbow
+      pixels.fill(pixels.gamma32(pixels.ColorHSV(angle * 65536 / gradations)), 0, NUMPIXELS);
+      pixels.show();
+      angle = (angle + rainbowSpeed) % gradations; // Adjust this value to control the speed of the rainbow effect
+    }
   }
   else 
   {
@@ -133,6 +166,14 @@ void loop()
 
       case 0xF00FEF00: // fade mode button
         state = 1;
+        break;
+
+      // case 0xF20DFE00: // cycle mode button
+      //   state = 2;
+      //   break;
+
+      case 0xE817EF00: // rainbow mode button
+        state = 3;
         break;
 
       case 0xFB04EF00:
